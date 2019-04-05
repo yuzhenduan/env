@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 #######################
-# env.__init__
+# common.tools
 #######################
-import pymysql
-pymysql.install_as_MySQLdb()
+
+def parseCol(col):
+   return ','.join(col)
+
