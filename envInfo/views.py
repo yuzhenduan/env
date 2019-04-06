@@ -3,9 +3,7 @@
 # envInfo.views
 #######################
 
-import json
 from django.http import HttpResponse
-from common.tools import parseCol
 from common.dealWith import deal_with,deal_with_param
 
 # envInfo/health
@@ -14,14 +12,14 @@ def health(request):
 
 # envInfo/allEnv
 def get_env_all(request):
-   column=("id","name","lock_deploy","lock_sync","in_use","set_nginx","owner","monitor","dingding_token")
+   column=("id","UUID","name","lock_deploy","lock_sync","in_use","set_nginx","owner","monitor","dingding_token")
    sql="""select {param} from env""".format(param=','.join(column))
    return HttpResponse(deal_with(column,sql))
    
 
 # envInfo/env/<choose>
 def get_env_by_choose(request,choose):
-   column=("id","name","lock_deploy","lock_sync","in_use","set_nginx","owner","monitor","dingding_token")
+   column=("id","UUID","name","lock_deploy","lock_sync","in_use","set_nginx","owner","monitor","dingding_token")
    sql="""select {param} from env""".format(param=','.join(column))
    return HttpResponse(deal_with_param(request,column,sql,choose))
 

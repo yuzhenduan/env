@@ -11,7 +11,7 @@
  Target Server Version : 50560
  File Encoding         : 65001
 
- Date: 06/04/2019 00:53:11
+ Date: 06/04/2019 19:54:05
 */
 
 SET NAMES utf8mb4;
@@ -26,10 +26,12 @@ CREATE TABLE `business`  (
   `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `en_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `qa_leader` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `deploy_lock` tinyint(3) UNSIGNED ZEROFILL NOT NULL,
+  `sync_lock` tinyint(3) UNSIGNED ZEROFILL NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `uniq_en_name`(`en_name`) USING BTREE,
   INDEX `name`(`name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for business_project
@@ -44,8 +46,8 @@ CREATE TABLE `business_project`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `uniq_business_project`(`business_id`, `project_id`) USING BTREE,
   INDEX `fk_bp_project_id`(`project_id`) USING BTREE,
-  CONSTRAINT `fk_bp_business_id` FOREIGN KEY (`business_id`) REFERENCES `business` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_bp_project_id` FOREIGN KEY (`project_id`) REFERENCES `project` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_bp_project_id` FOREIGN KEY (`project_id`) REFERENCES `project` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_bp_business_id` FOREIGN KEY (`business_id`) REFERENCES `business` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
@@ -68,7 +70,7 @@ CREATE TABLE `db_instance`  (
   `update_time` datetime NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `uniq_db_url`(`db_url`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for defaults
@@ -107,6 +109,7 @@ CREATE TABLE `drone`  (
 DROP TABLE IF EXISTS `env`;
 CREATE TABLE `env`  (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `UUID` char(36) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `lock_deploy` tinyint(3) UNSIGNED ZEROFILL NOT NULL,
   `lock_sync` tinyint(3) UNSIGNED ZEROFILL NOT NULL,
@@ -119,7 +122,7 @@ CREATE TABLE `env`  (
   `update_time` datetime NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `env_name`(`name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for env_business_db
@@ -137,9 +140,9 @@ CREATE TABLE `env_business_db`  (
   UNIQUE INDEX `uniq_ebd`(`env`, `business`, `db_url`) USING BTREE,
   INDEX `fk_ebd_business`(`business`) USING BTREE,
   INDEX `fk_ebd_db_url`(`db_url`) USING BTREE,
-  CONSTRAINT `fk_ebd_env` FOREIGN KEY (`env`) REFERENCES `env` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_ebd_business` FOREIGN KEY (`business`) REFERENCES `business` (`en_name`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_ebd_db_url` FOREIGN KEY (`db_url`) REFERENCES `db_instance` (`db_url`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_ebd_db_url` FOREIGN KEY (`db_url`) REFERENCES `db_instance` (`db_url`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_ebd_env` FOREIGN KEY (`env`) REFERENCES `env` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
@@ -158,10 +161,10 @@ CREATE TABLE `env_business_host`  (
   UNIQUE INDEX `uniq_ebh`(`env`, `business`, `host`) USING BTREE,
   INDEX `fk_ebh_business`(`business`) USING BTREE,
   INDEX `fk_ebh_host`(`host`) USING BTREE,
-  CONSTRAINT `fk_ebh_env` FOREIGN KEY (`env`) REFERENCES `env` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_ebh_host` FOREIGN KEY (`host`) REFERENCES `hosts` (`host`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_ebh_business` FOREIGN KEY (`business`) REFERENCES `business` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_ebh_host` FOREIGN KEY (`host`) REFERENCES `hosts` (`host`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+  CONSTRAINT `fk_ebh_env` FOREIGN KEY (`env`) REFERENCES `env` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for env_var
@@ -208,7 +211,7 @@ CREATE TABLE `hosts`  (
   `update_time` datetime NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `uniq_host`(`host`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for op_type
@@ -257,9 +260,9 @@ CREATE TABLE `project`  (
   UNIQUE INDEX `uniq_p`(`business`, `name`) USING BTREE,
   INDEX `fk_p_user`(`owner`) USING BTREE,
   INDEX `fk_p_qa`(`qa`) USING BTREE,
-  CONSTRAINT `fk_p_business` FOREIGN KEY (`business`) REFERENCES `business` (`en_name`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `fk_p_user` FOREIGN KEY (`owner`) REFERENCES `user` (`real_name`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_p_qa` FOREIGN KEY (`qa`) REFERENCES `user` (`real_name`) ON DELETE NO ACTION ON UPDATE CASCADE
+  CONSTRAINT `fk_p_qa` FOREIGN KEY (`qa`) REFERENCES `user` (`real_name`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  CONSTRAINT `fk_p_business` FOREIGN KEY (`business`) REFERENCES `business` (`en_name`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
@@ -289,6 +292,9 @@ CREATE TABLE `user`  (
   `token` varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '密码',
   `roles` smallint(5) UNSIGNED DEFAULT NULL COMMENT '角色',
   `groupname` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '归属小组',
+  `type` tinyint(3) UNSIGNED ZEROFILL NOT NULL,
+  `overlap_business` tinyint(4) NOT NULL,
+  `overlap_env` tinyint(3) UNSIGNED ZEROFILL NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `uniqe_email`(`email`) USING BTREE,
   INDEX `real_name`(`real_name`) USING BTREE

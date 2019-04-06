@@ -2,7 +2,6 @@
 #######################
 # projectInfo.views
 #######################
-
 from django.http import HttpResponse
 from common.dealWith import deal_with,deal_with_param
 
@@ -12,14 +11,14 @@ def health(request):
 
 # projectInfo/business/all
 def get_business_all(request):
-   column=("id","name","en_name","qa_leader")
+   column=("id","name","en_name","qa_leader","deploy_lock","sync_lock")
    sql="""select {param} from business""".format(param=','.join(column))
    return HttpResponse(deal_with(column,sql))
 
 
 # projectInfo/business
 def get_business_choose(request):
-   column=("id","name","en_name","qa_leader")
+   column=("id","name","en_name","qa_leader","deploy_lock","sync_lock")
    sql="""select {param} from business""".format(param=','.join(column))
    return HttpResponse(deal_with_param(request,column,sql,choose))
 

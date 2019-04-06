@@ -2,7 +2,6 @@
 #######################
 # common.dealWith
 #######################
-
 import json
 from common.models import query
 from common.query2json import infos2json
