@@ -39,14 +39,14 @@ def get_hosts_by_choose(request,choose):
 
 # envInfo/allDbInstance
 def get_dbInstance_all(request):
-   column=("id","host","port","db_url","username","passwd","groupname","owner","type","monitor","locked")
+   column=("id","host","port","db_url","username","groupname","owner","type","monitor","locked")
    sql="""select {param} from db_instance""".format(param=','.join(column))
    return HttpResponse(deal_with(column,sql))
 
 
 # envInfo/dbInstance/<choose>
 def get_dbInstance_by_choose(request,choose):
-   column=("id","host","port","db_url","username","passwd","groupname","owner","type","monitor","locked")
+   column=("id","host","port","db_url","username","groupname","owner","type","monitor","locked")
    sql="""select {param} from db_instance""".format(param=','.join(column))
    return HttpResponse(deal_with_param(request,column,sql,choose))
 

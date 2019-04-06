@@ -26,14 +26,14 @@ def get_group_choose(request,choose):
 
 # usermgt/allUser
 def get_user_all(request):
-   column=("id","login_name","real_name","email","token","roles","groupname","type","overlap_business","overlap_env")
+   column=("id","login_name","real_name","email","roles","groupname","type","overlap_business","overlap_env")
    sql="""select {param} from user""".format(param=','.join(column))
    return HttpResponse(deal_with(column,sql))
 
 
 # usermgt/user/<choose>
 def get_user_choose(request,choose):
-   column=("id","login_name","real_name","email","token","roles","groupname","type","overlap_business","overlap_env")
+   column=("id","login_name","real_name","email","roles","groupname","type","overlap_business","overlap_env")
    sql="""select {param} from user""".format(param=','.join(column))
    return HttpResponse(deal_with_param(request,column,sql,choose))
 
